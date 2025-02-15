@@ -1,14 +1,19 @@
 package com.jasperservice.service;
 
 
-import com.jasperservice.dto.ExcelRequestDto;
+import com.jasperservice.config.MessageService;
+import com.jasperservice.dto.RequestDto;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.common.common.Const;
+import org.common.common.LogUtil;
+import org.common.common.ResponseBean;
+import org.common.exception.ValidationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
@@ -17,10 +22,25 @@ import java.util.Map;
 @Service
 public class ExcelService {
 
-    public void generateExcel(ExcelRequestDto excelRequestDto) {
+    private final MessageService messageService;
 
-        if (excelRequestDto == null || excelRequestDto.getColumnHeader() == null || excelRequestDto.getDataList() == null) {
-            throw new IllegalArgumentException("Column headers and data cannot be null");
+    public ExcelService(MessageService messageService) {
+        this.messageService = messageService;
+    }
+
+    /**
+     * @apiNote Generates an Excel file from the provided {@link RequestDto}.
+     * @param requestDto {@link RequestDto}
+     * @return Base64-encoded string of the generated Excel file.
+     * @throws ValidationException If the request DTO or its required fields are null.
+     * @author Parth
+     */
+    public ResponseBean<String> generateExcel(RequestDto requestDto) throws IOException {
+
+        if (requestDto == null || requestDto.getColumnHeader() == null || requestDto.getDataList() == null) {
+            throw new ValidationException(Const.rCode.BAD_REQUEST, HttpStatus.OK,
+                    messageService.getMessage("EXCEL_REQUEST_EMPTY"),
+                    messageService.getMessage("EXCEL_REQUEST_EMPTY"), null);
         }
 
         Workbook workbook = new XSSFWorkbook();
@@ -36,7 +56,7 @@ public class ExcelService {
         style.setFont(font);
         style.setAlignment(HorizontalAlignment.CENTER);
 
-        Map<String, String> columnHeaders = excelRequestDto.getColumnHeader();
+        Map<String, String> columnHeaders = requestDto.getColumnHeader();
         List<String> headerNames = List.copyOf(columnHeaders.values());
 
         for (int i = 0; i < headerNames.size(); i++) {
@@ -46,7 +66,7 @@ public class ExcelService {
 
         }
 
-        List<Map<String, String>> dataList = excelRequestDto.getDataList();
+        List<Map<String, String>> dataList = requestDto.getDataList();
         CellStyle dataStyle = workbook.createCellStyle();
         dataStyle.setAlignment(HorizontalAlignment.CENTER);
 
@@ -63,27 +83,20 @@ public class ExcelService {
               cell.setCellStyle(dataStyle);
            }
 
-
-        }
-//        return convertToBase64(workbook);
-
-        try (FileOutputStream out = new FileOutputStream("/home/bizott-2/CodingPractice/test.xlsx")) {
-           workbook.write(out);
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
+        return new ResponseBean<>(HttpStatus.OK, "EXCEL_DOWNLOAD", "EXCEL_DOWNLOAD", convertToBase64(workbook));
 
     }
 
 
-    public String convertToBase64(Workbook workbook) {
+    public String convertToBase64(Workbook workbook) throws IOException {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             workbook.write(outputStream);
             return Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (Exception e) {
-            throw new RuntimeException("Error while converting Excel to Base64", e);
+            LogUtil.printErrorStackTraceLog(e);
+            throw e;
         }
     }
 

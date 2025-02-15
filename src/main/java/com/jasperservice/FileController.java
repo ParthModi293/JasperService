@@ -1,6 +1,6 @@
 package com.jasperservice;
 
-import com.jasperservice.dto.ExcelRequestDto;
+import com.jasperservice.dto.RequestDto;
 import com.jasperservice.dto.FileDto;
 import com.jasperservice.service.CsvService;
 import com.jasperservice.service.ExcelService;
@@ -8,10 +8,10 @@ import com.jasperservice.service.FileService;
 import jakarta.validation.Valid;
 import net.sf.jasperreports.engine.JRException;
 import org.common.common.ResponseBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/get-pdf")
@@ -39,21 +39,18 @@ public class FileController {
     }
 
     @PostMapping("/excel")
-    public ResponseEntity<?> downloadExcel(@RequestBody ExcelRequestDto excelRequestDto) {
-
-        excelService.generateExcel(excelRequestDto);
-        return ResponseEntity.ok()
-                .body("Download");
+    public ResponseEntity<ResponseBean<String>> downloadExcel(@RequestBody RequestDto requestDto) throws IOException {
+        ResponseBean<String> responseBean = excelService.generateExcel(requestDto);
+        return new  ResponseEntity<>(responseBean, responseBean.getRStatus());
 
 
     }
 
     @PostMapping("/csv")
-    public ResponseEntity<?> downloadCsv(@RequestBody ExcelRequestDto excelRequestDto) {
+    public ResponseEntity<ResponseBean<String>> downloadCsv(@RequestBody RequestDto requestDto) throws IOException {
+        ResponseBean<String> responseBean = csvService.generateCsv(requestDto);
+        return new  ResponseEntity<>(responseBean, responseBean.getRStatus());
 
-        csvService.generateCsv(excelRequestDto);
-        return ResponseEntity.ok()
-                .body("Download");
 
 
     }
