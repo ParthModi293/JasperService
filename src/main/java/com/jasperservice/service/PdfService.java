@@ -18,8 +18,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class FileService {
+public class PdfService {
 
+    /**
+     * @param fileDto
+     * @return String
+     * @throws JRException
+     * @author Zeel
+     * @apiNote This api is used to create pdf with dynamic data ( with dynamic header,footer and data content also )
+     * and return base64 of the pdf
+     */
     public ResponseBean<String> generateJasperPdf(FileDto fileDto) throws JRException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         JasperDesign jasperDesign = new JasperDesign();
@@ -139,54 +147,13 @@ public class FileService {
         }
         fBand.setHeight(42);
         fBand.addElement(footerSR);
-
         jasperDesign.setTitle(hBand);
         jasperDesign.setPageFooter(fBand);
-
         JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(fileDto.getDataList());
-
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jrBeanCollectionDataSource);
         JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-
-        return new ResponseBean<>(HttpStatus.OK, "Pdf fetched successfully", "Pdf fetched successfully", Base64.getEncoder().encodeToString(outputStream.toByteArray()));
+        return new ResponseBean<>(HttpStatus.OK, "Pdf fetched successfully", "Pdf fetched successfully",
+                Base64.getEncoder().encodeToString(outputStream.toByteArray()));
     }
-
-   /* public static void main(String[] args) throws JRException{
-        FileDto fileDto = new FileDto();
-        fileDto.setHeaderFilePath("/home/bizott3/JaspersoftWorkspace/MyReports/demoHeader.jrxml");
-        fileDto.setFooterFilePath("/home/bizott3/JaspersoftWorkspace/MyReports/demoFooter.jrxml");
-
-        List<Map<String, String>> list = new ArrayList<>();
-        for (int i = 1; i <= 50; i++) {
-            Map<String, String> map = new HashMap<>();
-            map.put("code", String.valueOf(100 + i));
-            map.put("clientName", "Client " + i);
-            map.put("debit", String.valueOf(100 + i * 10));
-            map.put("credit", String.valueOf(100.5 + i * 5));
-            list.add(map);
-        }
-        fileDto.setDataList(list);
-
-        Map<String, String> map = new HashMap<>();
-        map.put("logo", "/home/bizott3/Downloads/photo.jpg");
-        map.put("companyName", "Bizott Pvt. Ltd.");
-        map.put("address", "401,Amora arced,Utran,Surat");
-        map.put("templateName", "User Add");
-        fileDto.setHeaderParameters(map);
-
-        Map<String, String> columnName = new LinkedHashMap<>();
-        columnName.put("Code", "code");
-        columnName.put("Client Name", "clientName");
-        columnName.put("Debit", "debit");
-        columnName.put("Credit", "credit");
-
-        fileDto.setFooterParameters(null);
-        fileDto.setColumnNames(columnName);
-
-        JasperPdfGenerator jasperPdfGenerator = new JasperPdfGenerator();
-        String base64 = jasperPdfGenerator.generateJasperPdf(fileDto);
-        System.out.println(base64);
-    }*/
 }

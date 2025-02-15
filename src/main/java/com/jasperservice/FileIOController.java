@@ -4,8 +4,9 @@ import com.jasperservice.dto.RequestDto;
 import com.jasperservice.dto.FileDto;
 import com.jasperservice.service.CsvService;
 import com.jasperservice.service.ExcelService;
-import com.jasperservice.service.FileService;
+import com.jasperservice.service.PdfService;
 import jakarta.validation.Valid;
+import lombok.extern.log4j.Log4j2;
 import net.sf.jasperreports.engine.JRException;
 import org.common.common.ResponseBean;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/get-pdf")
+@RequestMapping("/get-file")
 @CrossOrigin
-public class FileController {
+@Log4j2
+public class FileIOController {
 
-    private final FileService fileService;
+    private final PdfService fileService;
 
 
     private final ExcelService excelService;
@@ -26,14 +28,15 @@ public class FileController {
 
     private final CsvService csvService;
 
-    public FileController(FileService fileService, ExcelService excelService, CsvService csvService) {
+    public FileIOController(PdfService fileService, ExcelService excelService, CsvService csvService) {
         this.fileService = fileService;
         this.excelService = excelService;
         this.csvService = csvService;
     }
 
-    @PostMapping()
-    public ResponseEntity<ResponseBean<String>> generateJasperPdf(@Valid @RequestBody FileDto fileDto) throws JRException {
+    @PostMapping("/pdf")
+    public ResponseEntity<ResponseBean<String>> getBill(@Valid @RequestBody FileDto fileDto) throws JRException {
+        log.info("Create pdf: {}", fileDto);
         ResponseBean<String> responseBean = fileService.generateJasperPdf(fileDto);
         return new ResponseEntity<>(responseBean, responseBean.getRStatus());
     }
