@@ -43,6 +43,7 @@ public class FileIOController {
 
     @PostMapping("/excel")
     public ResponseEntity<ResponseBean<String>> downloadExcel(@RequestBody RequestDto requestDto) throws IOException {
+        log.info("Create excel: {}", requestDto);
         ResponseBean<String> responseBean = excelService.generateExcel(requestDto);
         return new ResponseEntity<>(responseBean, responseBean.getRStatus());
 
@@ -51,6 +52,7 @@ public class FileIOController {
 
     @PostMapping("/csv")
     public ResponseEntity<ResponseBean<String>> downloadCsv(@RequestBody RequestDto requestDto) throws IOException {
+        log.info("Create csv: {}", requestDto);
         ResponseBean<String> responseBean = csvService.generateCsv(requestDto);
         return new ResponseEntity<>(responseBean, responseBean.getRStatus());
 
