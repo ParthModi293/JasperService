@@ -5,7 +5,7 @@ import com.clapcle.core.common.ConstCore;
 import com.clapcle.core.common.LogUtil;
 import com.clapcle.core.common.ResponseBean;
 import com.clapcle.core.exception.ValidationException;
-import com.clapcle.file.config.MessageService;
+import com.clapcle.file.config.LocaleService;
 import com.clapcle.file.dto.RequestDto;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -22,10 +22,10 @@ import java.util.Map;
 @Service
 public class ExcelService {
 
-    private final MessageService messageService;
+    private final LocaleService localeService;
 
-    public ExcelService(MessageService messageService) {
-        this.messageService = messageService;
+    public ExcelService(LocaleService localeService) {
+        this.localeService = localeService;
     }
 
     /**
@@ -39,8 +39,8 @@ public class ExcelService {
 
         if (requestDto == null || requestDto.getColumnHeader() == null || requestDto.getDataList() == null) {
             throw new ValidationException(ConstCore.rCode.BAD_REQUEST, HttpStatus.OK,
-                    messageService.getMessage("EXCEL_REQUEST_EMPTY"),
-                    messageService.getMessage("EXCEL_REQUEST_EMPTY"), null);
+                    localeService.getMessage("EXCEL_REQUEST_EMPTY"),
+                    localeService.getMessage("EXCEL_REQUEST_EMPTY"), null);
         }
 
         Workbook workbook = new XSSFWorkbook();
