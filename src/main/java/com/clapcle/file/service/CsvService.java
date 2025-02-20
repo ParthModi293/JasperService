@@ -1,12 +1,12 @@
-package com.jasperservice.service;
+package com.clapcle.file.service;
 
-import com.jasperservice.config.MessageService;
-import com.jasperservice.dto.RequestDto;
+import com.clapcle.core.common.ConstCore;
+import com.clapcle.core.common.LogUtil;
+import com.clapcle.core.common.ResponseBean;
+import com.clapcle.core.exception.ValidationException;
+import com.clapcle.file.config.MessageService;
+import com.clapcle.file.dto.RequestDto;
 import com.opencsv.CSVWriter;
-import org.common.common.Const;
-import org.common.common.LogUtil;
-import org.common.common.ResponseBean;
-import org.common.exception.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -25,16 +25,16 @@ public class CsvService {
     }
 
     /**
-     * @apiNote Generates a CSV file based on the provided data and returns it as a Base64-encoded string.
      * @param requestDto The {@link RequestDto}
      * @return A Base64-encoded string representation of the generated CSV file.
-     * @throws IOException If an error occurs during CSV creation or encoding.
+     * @throws IOException         If an error occurs during CSV creation or encoding.
      * @throws ValidationException If the request is empty or contains invalid data.
+     * @apiNote Generates a CSV file based on the provided data and returns it as a Base64-encoded string.
      * @author [Parth]
      */
     public ResponseBean<String> generateCsv(RequestDto requestDto) throws IOException {
         if (requestDto == null || requestDto.getColumnHeader() == null || requestDto.getDataList() == null) {
-            throw new ValidationException(Const.rCode.BAD_REQUEST, HttpStatus.OK,
+            throw new ValidationException(ConstCore.rCode.BAD_REQUEST, HttpStatus.OK,
                     messageService.getMessage("CSV_REQUEST_EMPTY"),
                     messageService.getMessage("CSV_REQUEST_EMPTY"), null);
         }
@@ -61,7 +61,7 @@ public class CsvService {
 
             csvWriter.flush();
 
-            return new ResponseBean<>(HttpStatus.OK, "CSV_DOWNLOAD", "CSV_DOWNLOAD", Base64.getEncoder().encodeToString(outputStream.toByteArray()));
+            return new ResponseBean<>(HttpStatus.OK, ConstCore.rCode.SUCCESS, "CSV_DOWNLOAD", "CSV_DOWNLOAD", Base64.getEncoder().encodeToString(outputStream.toByteArray()));
 
         } catch (Exception e) {
             LogUtil.printErrorStackTraceLog(e);

@@ -1,13 +1,14 @@
-package com.jasperservice.service;
+package com.clapcle.file.service;
 
-import com.jasperservice.dto.FileDto;
+import com.clapcle.core.common.ConstCore;
+import com.clapcle.core.common.ResponseBean;
+import com.clapcle.file.dto.FileDto;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.*;
 import net.sf.jasperreports.engine.type.HorizontalTextAlignEnum;
 import net.sf.jasperreports.engine.type.ModeEnum;
 import net.sf.jasperreports.engine.type.VerticalTextAlignEnum;
-import org.common.common.ResponseBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -153,7 +154,7 @@ public class PdfService {
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(fileDto.getDataList());
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jrBeanCollectionDataSource);
         JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
-        return new ResponseBean<>(HttpStatus.OK, "Pdf fetched successfully", "Pdf fetched successfully",
+        return new ResponseBean<>(HttpStatus.OK, ConstCore.rCode.SUCCESS, "Pdf fetched successfully", "Pdf fetched successfully",
                 Base64.getEncoder().encodeToString(outputStream.toByteArray()));
     }
 }

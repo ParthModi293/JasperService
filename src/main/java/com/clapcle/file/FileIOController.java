@@ -1,14 +1,14 @@
-package com.jasperservice;
+package com.clapcle.file;
 
-import com.jasperservice.dto.RequestDto;
-import com.jasperservice.dto.FileDto;
-import com.jasperservice.service.CsvService;
-import com.jasperservice.service.ExcelService;
-import com.jasperservice.service.PdfService;
+import com.clapcle.core.common.ResponseBean;
+import com.clapcle.file.service.CsvService;
+import com.clapcle.file.service.ExcelService;
+import com.clapcle.file.service.PdfService;
+import com.clapcle.file.dto.RequestDto;
+import com.clapcle.file.dto.FileDto;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import net.sf.jasperreports.engine.JRException;
-import org.common.common.ResponseBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +44,7 @@ public class FileIOController {
     @PostMapping("/excel")
     public ResponseEntity<ResponseBean<String>> downloadExcel(@RequestBody RequestDto requestDto) throws IOException {
         ResponseBean<String> responseBean = excelService.generateExcel(requestDto);
-        return new  ResponseEntity<>(responseBean, responseBean.getRStatus());
+        return new ResponseEntity<>(responseBean, responseBean.getRStatus());
 
 
     }
@@ -52,8 +52,7 @@ public class FileIOController {
     @PostMapping("/csv")
     public ResponseEntity<ResponseBean<String>> downloadCsv(@RequestBody RequestDto requestDto) throws IOException {
         ResponseBean<String> responseBean = csvService.generateCsv(requestDto);
-        return new  ResponseEntity<>(responseBean, responseBean.getRStatus());
-
+        return new ResponseEntity<>(responseBean, responseBean.getRStatus());
 
 
     }

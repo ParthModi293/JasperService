@@ -1,4 +1,4 @@
-package com.jasperservice.config;
+package com.clapcle.file.config;
 
 
 import org.springframework.context.MessageSource;

@@ -1,15 +1,15 @@
-package com.jasperservice.service;
+package com.clapcle.file.service;
 
 
-import com.jasperservice.config.MessageService;
-import com.jasperservice.dto.RequestDto;
+import com.clapcle.core.common.ConstCore;
+import com.clapcle.core.common.LogUtil;
+import com.clapcle.core.common.ResponseBean;
+import com.clapcle.core.exception.ValidationException;
+import com.clapcle.file.config.MessageService;
+import com.clapcle.file.dto.RequestDto;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.common.common.Const;
-import org.common.common.LogUtil;
-import org.common.common.ResponseBean;
-import org.common.exception.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -29,16 +29,16 @@ public class ExcelService {
     }
 
     /**
-     * @apiNote Generates an Excel file from the provided {@link RequestDto}.
      * @param requestDto {@link RequestDto}
      * @return Base64-encoded string of the generated Excel file.
      * @throws ValidationException If the request DTO or its required fields are null.
+     * @apiNote Generates an Excel file from the provided {@link RequestDto}.
      * @author Parth
      */
     public ResponseBean<String> generateExcel(RequestDto requestDto) throws IOException {
 
         if (requestDto == null || requestDto.getColumnHeader() == null || requestDto.getDataList() == null) {
-            throw new ValidationException(Const.rCode.BAD_REQUEST, HttpStatus.OK,
+            throw new ValidationException(ConstCore.rCode.BAD_REQUEST, HttpStatus.OK,
                     messageService.getMessage("EXCEL_REQUEST_EMPTY"),
                     messageService.getMessage("EXCEL_REQUEST_EMPTY"), null);
         }
@@ -50,7 +50,7 @@ public class ExcelService {
 
         Row headerRow = sheet.createRow(1);
         CellStyle style = workbook.createCellStyle();
-       XSSFFont font = (XSSFFont) workbook.createFont();
+        XSSFFont font = (XSSFFont) workbook.createFont();
         font.setFontHeight(10);
         font.setBold(true);
         style.setFont(font);
@@ -70,22 +70,22 @@ public class ExcelService {
         CellStyle dataStyle = workbook.createCellStyle();
         dataStyle.setAlignment(HorizontalAlignment.CENTER);
 
-        for(int i=0; i < dataList.size(); i++){
+        for (int i = 0; i < dataList.size(); i++) {
 
-            Row dataRow = sheet.createRow(i+3);
+            Row dataRow = sheet.createRow(i + 3);
             Map<String, String> data = dataList.get(i);
 
             int columnIndex = 0;
-           for(String headerKey : columnHeaders.keySet()){
-               String value = data.get(headerKey);
-               Cell cell = dataRow.createCell(columnIndex++);
-               cell.setCellValue(value != null ? value : "");
-              cell.setCellStyle(dataStyle);
-           }
+            for (String headerKey : columnHeaders.keySet()) {
+                String value = data.get(headerKey);
+                Cell cell = dataRow.createCell(columnIndex++);
+                cell.setCellValue(value != null ? value : "");
+                cell.setCellStyle(dataStyle);
+            }
 
         }
 
-        return new ResponseBean<>(HttpStatus.OK, "EXCEL_DOWNLOAD", "EXCEL_DOWNLOAD", convertToBase64(workbook));
+        return new ResponseBean<>(HttpStatus.OK, ConstCore.rCode.SUCCESS, "EXCEL_DOWNLOAD", "EXCEL_DOWNLOAD", convertToBase64(workbook));
 
     }
 

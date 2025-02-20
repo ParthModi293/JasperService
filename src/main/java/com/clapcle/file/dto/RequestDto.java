@@ -1,4 +1,4 @@
-package com.jasperservice.dto;
+package com.clapcle.file.dto;
 
 import lombok.Data;
 

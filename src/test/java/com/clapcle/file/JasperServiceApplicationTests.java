@@ -1,4 +1,4 @@
-package com.jasperservice;
+package com.clapcle.file;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
