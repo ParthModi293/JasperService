@@ -4,7 +4,7 @@ import com.clapcle.core.common.ConstCore;
 import com.clapcle.core.common.LogUtil;
 import com.clapcle.core.common.ResponseBean;
 import com.clapcle.core.exception.ValidationException;
-import com.clapcle.file.config.LocaleService;
+import com.clapcle.file.config.FileLocaleService;
 import com.clapcle.file.dto.RequestDto;
 import com.opencsv.CSVWriter;
 import org.springframework.http.HttpStatus;
@@ -18,10 +18,10 @@ import java.util.Map;
 @Service
 public class CsvService {
 
-    private final LocaleService localeService;
+    private final FileLocaleService fileLocaleService;
 
-    public CsvService(LocaleService localeService) {
-        this.localeService = localeService;
+    public CsvService(FileLocaleService fileLocaleService) {
+        this.fileLocaleService = fileLocaleService;
     }
 
     /**
@@ -35,8 +35,8 @@ public class CsvService {
     public ResponseBean<String> generateCsv(RequestDto requestDto) throws IOException {
         if (requestDto == null || requestDto.getColumnHeader() == null || requestDto.getDataList() == null) {
             throw new ValidationException(ConstCore.rCode.BAD_REQUEST, HttpStatus.OK,
-                    localeService.getMessage("CSV_REQUEST_EMPTY"),
-                    localeService.getMessage("CSV_REQUEST_EMPTY"), null);
+                    fileLocaleService.getMessage("CSV_REQUEST_EMPTY"),
+                    fileLocaleService.getMessage("CSV_REQUEST_EMPTY"), null);
         }
 
         try {
